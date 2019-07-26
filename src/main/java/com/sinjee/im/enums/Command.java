@@ -1,9 +1,6 @@
-package com.sinjee.im.dto;
+package com.sinjee.im.enums;
 
-import com.sinjee.im.utils.Util;
 import lombok.Getter;
-
-import java.nio.ByteBuffer;
 
 /***
  * @author kweitan
@@ -31,8 +28,9 @@ public enum Command {
     LOGOUT_GROUP_RESPONSE(14); //退出群聊通知 服务端[发送] -> 客户端[接收]
 
     private Command(int value){
-        this.vaule = Util.intToByteLowArray(value) ;
+        this.vaule = value ;
     }
 
-    private final byte[] vaule ;
+    private final int vaule ;
+
 }

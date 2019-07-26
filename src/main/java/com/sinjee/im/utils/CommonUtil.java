@@ -1,27 +1,33 @@
 package com.sinjee.im.utils;
 
-public class Util {
+/**
+ * @author kweitan
+ * 通用工具类
+ */
+public class CommonUtil {
 
     //byte转int方法
-    public static int byteArrayToInt(byte[] bytes) {
-        return Byte.toUnsignedInt(bytes[0]);
-    }
+//    public static int byteArrayToInt(byte[] bytes) {
+//        return Byte.toUnsignedInt(bytes[0]);
+//    }
 
     //int转byte方法
-    public static byte[] intToByteLowArray(int i) {
-        byte[] result = new byte[1];
-        result[0] = (byte) (i & 0xFF);
+    public static byte intToByte(int i) {
+        byte result = (byte) (i & 0xFF);
         return result;
     }
 
+    //byte转int方法
+    public static int byteToInt(byte b){
+        return Byte.toUnsignedInt(b) ;
+    }
+
     public static void main(String[] args){
-        int num = 208 ;
-        byte[] b = intToByteLowArray(num) ;
+        int num = 8 ;
+        byte b = intToByte(num) ;
         System.out.println(b);
-
-        System.out.println(Byte.toUnsignedInt(b[0]));
-
-        System.out.println(byteToBit(b[0]));
+        System.out.println(byteToBit(b));
+        System.out.println(byteToInt(b));
     }
 
     //把byte转为字符串的bit

@@ -1,7 +1,17 @@
 package com.sinjee.im.config;
 
+import io.netty.util.AttributeKey;
+
+/**
+ * @author kweitan
+ * 基础配置
+ */
 public class Config {
+    //版本号
     public static final int VERSION = 1 ;
 
-    public static final int SERIALIZEMARK = 1; //1 表示使用protobuf
+    //channel 属性 绑定倒channel上
+    public static final AttributeKey<Boolean> LOGIN = AttributeKey.newInstance("login") ;
+
+    public static final int MAGIC_NUM = 0x12345678 ;
 }

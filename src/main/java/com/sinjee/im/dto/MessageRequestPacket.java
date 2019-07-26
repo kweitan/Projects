@@ -6,13 +6,12 @@ import com.sinjee.im.enums.Command;
 import com.sinjee.im.enums.SerializeEnum;
 import lombok.Data;
 
-/**
+/***
  * @author kweitan
- * 登录请求数据包
+ * 发送消息对象
  */
 @Data
-public class LoginRequestPacket extends DataPacket {
-
+public class MessageRequestPacket extends DataPacket{
     //指令
     @Protobuf(fieldType = FieldType.INT32,order = 2,required = true)
     private Integer command = Command.LOGIN_REQUEST.getVaule();
@@ -21,17 +20,9 @@ public class LoginRequestPacket extends DataPacket {
     @Protobuf(fieldType = FieldType.INT32,order = 3,required = true)
     private Integer serializeMark = SerializeEnum.PROTOBUF_SERIALIZE.getValue();
 
-    //用户userId
-    @Protobuf(fieldType = FieldType.STRING, order = 4, required = true)
-    private String userId ;
-
-    //用户名
-    @Protobuf(fieldType = FieldType.STRING, order = 5, required = true)
-    private String userName ;
-
-    //用户密码
-    @Protobuf(fieldType = FieldType.STRING, order = 6, required = true)
-    private String userPassword ;
+    //消息内容
+    @Protobuf(fieldType = FieldType.STRING, order = 4, required = false)
+    private String message ;
 
     public int getCommandType(){
         return getCommand() ;
