@@ -39,4 +39,8 @@ public class CommonUtil {
                 + (byte) ((b >> 1) & 0x1) + (byte) ((b >> 0) & 0x1);
     }
 
+    public static int byte2Int(byte b){
+        return (int)(b & 0xff);
+    }
+
 }

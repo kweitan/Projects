@@ -3,8 +3,8 @@ package com.sinjee.im.utils;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.sinjee.im.common.SerializeFactory;
 import com.sinjee.im.config.Config;
-import com.sinjee.im.dto.DataPacket;
-import com.sinjee.im.dto.LoginRequestPacket;
+import com.sinjee.im.dto.*;
+import com.sinjee.im.enums.Command;
 import com.sinjee.im.enums.SerializeEnum;
 import io.netty.buffer.ByteBuf;
 
@@ -14,10 +14,10 @@ public class DataPacketCodeC {
 
     private DataPacketCodeC(){}
 
-    public void encode(DataPacket packet,ByteBuf out) throws Exception{
+    public static void encode(DataPacket packet,ByteBuf out) throws Exception{
+
         //1.序列化对象
-        Codec<DataPacket> packetCodec = SerializeFactory.getProtobufCodeC(DataPacket.class) ;
-        byte[] bytes = packetCodec.encode(packet) ;
+        byte[] bytes = SerializeFactory.serialize(packet.getCommandType(),SerializeEnum.PROTOBUF_SERIALIZE.getValue(),packet) ;
 
         //2.编码过程
         out.writeInt(Config.MAGIC_NUM) ;
@@ -25,12 +25,12 @@ public class DataPacketCodeC {
         out.writeByte(SerializeEnum.PROTOBUF_SERIALIZE.getValue()) ;
         out.writeByte(packet.getCommandType()) ;
 
-        out.writeInt(bytes.length) ;
+        out.writeInt(bytes == null?0:bytes.length) ;
         out.writeBytes(bytes) ;
 
     }
 
-    public void decode(ByteBuf in){
+    public static DataPacket decode(ByteBuf in) throws Exception{
 
         //1.跳过魔数
         in.skipBytes(4) ;
@@ -38,7 +38,7 @@ public class DataPacketCodeC {
         //2.跳过版本号
         in.skipBytes(1) ;
 
-        //3.读序列号标识
+        //3.读序列化标识
         byte serializeType = in.readByte() ;
 
         //4.读指令集
@@ -51,6 +51,7 @@ public class DataPacketCodeC {
         in.readBytes(bytes);
 
         //反序列化
+        return SerializeFactory.deSerialize(command,serializeType,bytes) ;
 
     }
 

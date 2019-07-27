@@ -46,6 +46,7 @@ public class IMServerStart {
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
+
                         //todo
                     }
                 });
