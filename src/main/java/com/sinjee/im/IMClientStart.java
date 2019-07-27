@@ -80,11 +80,8 @@ public class IMClientStart {
                 //实现指数退避的方式实现重新连接
                 //重新连接
                 int order = (MAX_RETRY - retry) + 1;
-
                 int delay = 1 << order ;
-
                 log.error("{}:连接失败，第{}次重连接......",new Date(),order);
-
                 bootstrap.config().group().schedule(
                         ()->connect(bootstrap,host,port,retry -1),delay,TimeUnit.SECONDS) ;
             }
