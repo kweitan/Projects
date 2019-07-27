@@ -10,11 +10,11 @@ import io.netty.buffer.ByteBuf;
 
 public class DataPacketCodeC {
 
-    public static DataPacketCodeC INSTANCE = new DataPacketCodeC() ;
+    public static final DataPacketCodeC INSTANCE = new DataPacketCodeC() ;
 
     private DataPacketCodeC(){}
 
-    public static void encode(DataPacket packet,ByteBuf out) throws Exception{
+    public void encode(DataPacket packet,ByteBuf out) throws Exception{
 
         //1.序列化对象
         byte[] bytes = SerializeFactory.serialize(packet.getCommandType(),SerializeEnum.PROTOBUF_SERIALIZE.getValue(),packet) ;
@@ -30,7 +30,7 @@ public class DataPacketCodeC {
 
     }
 
-    public static DataPacket decode(ByteBuf in) throws Exception{
+    public DataPacket decode(ByteBuf in) throws Exception{
 
         //1.跳过魔数
         in.skipBytes(4) ;

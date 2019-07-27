@@ -1,5 +1,6 @@
 package com.sinjee.im;
 
+import com.sinjee.im.Handlers.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -45,12 +46,22 @@ public class IMServerStart {
                 //9.ChannelInitializer定义后续每条连接的数据读写 业务处理逻辑
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
-                    protected void initChannel(NioSocketChannel nioSocketChannel) throws Exception {
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //1).判断是否是自定协议格式 否：拒绝 基础长度域拆包器 在decode()方法执行前先进行判断
+                        ch.pipeline().addLast(new Verify()) ;
 
-                        //todo
+                        //2).添加解码器
+                        ch.pipeline().addLast(new DataPacketDecode()) ;
+
+                        //todo 添加业务逻辑处理
+                        ch.pipeline().addLast(new LoginRequestHandler()) ;
+                        ch.pipeline().addLast(new MessageRequestHandler()) ;
+
+                        //last).最后添加编码器
+                        ch.pipeline().addLast(new DataPacketEncode()) ;
                     }
                 });
-        //10.绑定端口
+        //10.绑定端口9000
         serverBootstrap.bind(9000).addListener(new GenericFutureListener<Future<? super Void>>() {
             @Override
             public void operationComplete(Future<? super Void> future) throws Exception {

@@ -30,10 +30,16 @@ public class SerializeFactory {
 
     public static byte[] serialize(int command, int serializeType, DataPacket packet) throws Exception{
         byte[] bytes = null;
-        if (SerializeEnum.PROTOBUF_SERIALIZE.getValue() == serializeType){
             if (command == Command.LOGIN_REQUEST.getVaule()){
+
+                LoginRequestPacket loginRequestPacket = (LoginRequestPacket)packet ;
+                //判断序列化方式
+                if(loginRequestPacket.getSerializeMark() == serializeType){
+                    //使用其他规则进行序列化
+                }
+
                 Codec<LoginRequestPacket> codec= LoginRequestPacketCodec ;
-                bytes = codec.encode((LoginRequestPacket)packet) ;
+                bytes = codec.encode(loginRequestPacket) ;
 
             }else if (command == Command.LOGIN_RESPONSE.getVaule()){
                 Codec<LoginResponsePacket> codec= loginResponsePacketCodec ;
@@ -47,7 +53,7 @@ public class SerializeFactory {
                 Codec<MessageResponsePacket> codec= messageResponsePacketCodec ;
                 bytes = codec.encode((MessageResponsePacket)packet) ;
             }
-        }
+
         return bytes ;
     }
 
