@@ -55,6 +55,9 @@ public class IMServerStart {
 
                         //todo 添加业务逻辑处理
                         ch.pipeline().addLast(new LoginRequestHandler()) ;
+
+                        //新增加用户认证
+                        ch.pipeline().addLast(new AuthHandler()) ;
                         ch.pipeline().addLast(new MessageRequestHandler()) ;
 
                         //last).最后添加编码器

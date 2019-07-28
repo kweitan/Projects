@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageResponseHandler extends SimpleChannelInboundHandler<MessageResponsePacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageResponsePacket msg) throws Exception {
-        log.info("收到服务端返回的内容："+msg.getMessage());
+        String fromUserId = msg.getFromUserId() ;
+        String fromUserName = msg.getFromUserName() ;
+        System.out.println("来自用户ID:"+fromUserId+";用户昵称:"+fromUserName+";发送的内容=>"+msg.getMessage());
     }
 }

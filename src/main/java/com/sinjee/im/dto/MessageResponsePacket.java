@@ -20,8 +20,18 @@ public class MessageResponsePacket extends DataPacket {
     @Protobuf(fieldType = FieldType.INT32,order = 3,required = true)
     private Integer serializeMark = SerializeEnum.PROTOBUF_SERIALIZE.getValue();
 
+
+    //来自谁
+    @Protobuf(fieldType = FieldType.STRING, order = 4, required = true)
+    private String fromUserId ;
+
+
+    //来自谁名称
+    @Protobuf(fieldType = FieldType.STRING, order = 5, required = true)
+    private String fromUserName ;
+
     //消息内容
-    @Protobuf(fieldType = FieldType.STRING, order = 4, required = false)
+    @Protobuf(fieldType = FieldType.STRING, order = 6, required = false)
     private String message ;
 
     public int getCommandType(){

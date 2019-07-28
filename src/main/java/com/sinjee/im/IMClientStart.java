@@ -1,7 +1,12 @@
 package com.sinjee.im;
 
 import com.sinjee.im.Handlers.*;
+import com.sinjee.im.dto.LoginRequestPacket;
+import com.sinjee.im.dto.MessageRequestPacket;
+import com.sinjee.im.utils.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,6 +15,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
+import java.util.Scanner;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -74,6 +81,9 @@ public class IMClientStart {
         bootstrap.connect(host,port).addListener(future -> {
             if(future.isSuccess()){
                 log.info("连接成功");
+                Channel channel = ((ChannelFuture)future).channel() ;
+                //启动控制台线程
+                startConsoleThread(channel)  ;
             }else if(retry == 0){
                 log.error("重复次数已经用完，放弃连接");
             }else {
@@ -86,6 +96,42 @@ public class IMClientStart {
                         ()->connect(bootstrap,host,port,retry -1),delay,TimeUnit.SECONDS) ;
             }
         });
+    }
+
+    //控制台线程
+    private static void startConsoleThread(Channel channel){
+        //登录请求
+        LoginRequestPacket loginRequest = new LoginRequestPacket() ;
+        Scanner scanner = new Scanner(System.in) ;
+        new Thread(() -> {
+            while (!Thread.interrupted()){
+                if (!SessionUtil.hasLogin(channel)){
+                    //登录请求
+                    System.out.println("输入用户名称登录：");
+
+                    String userName = scanner.nextLine() ;
+                    loginRequest.setUserName(userName);
+                    loginRequest.setUserPassword("default");
+
+                    channel.writeAndFlush(loginRequest) ;
+
+                    try {
+                        Thread.sleep(1000);
+                    }catch (InterruptedException ie){
+
+                    }
+                }else {
+                    //登录后发送消息请求
+                    //空格
+                    String toUserId = scanner.next() ;
+                    String message = scanner.next() ;
+                    MessageRequestPacket messageRequestPacket = new MessageRequestPacket() ;
+                    messageRequestPacket.setToUserId(toUserId);
+                    messageRequestPacket.setMessage(message);
+                    channel.writeAndFlush(messageRequestPacket) ;
+                }
+            }
+        }).start();
     }
 
 }

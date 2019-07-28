@@ -28,6 +28,9 @@ public class LoginResponsePacket extends DataPacket {
     @Protobuf(fieldType = FieldType.STRING, order=5, required = false)
     private String reason ;
 
+    @Protobuf(fieldType = FieldType.STRING, order=6, required = true)
+    private String userId ;
+
     public int getCommandType(){
         return getCommand() ;
     }
