@@ -3,6 +3,7 @@ package com.sinjee.im;
 import com.sinjee.im.Handlers.*;
 import com.sinjee.im.dto.LoginRequestPacket;
 import com.sinjee.im.dto.MessageRequestPacket;
+import com.sinjee.im.utils.LoginUtil;
 import com.sinjee.im.utils.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
 import java.util.Scanner;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +29,7 @@ public class IMClientStart {
     private static final int MAX_RETRY = 5 ; //指数退避算法 默认重复测数
 
     public static void main(String[] args){
-
+        doStartUp() ;
     }
 
     public static void doStartUp(){
@@ -53,19 +53,26 @@ public class IMClientStart {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new Verify()) ; //拆包器+协议验证
+                        ch.pipeline().addLast(new VerifyHandler()) ; //拆包器+协议验证
                         ch.pipeline().addLast(new DataPacketDecode()); //解码器
+
 
                         //业务逻辑处理
                         ch.pipeline().addLast(new LoginResponseHandler()) ;
+
+                        //登出逻辑
+                        ch.pipeline().addLast(new LogoutResponseHandler()) ;
+
+                        //消息处理
                         ch.pipeline().addLast(new MessageResponseHandler()) ;
 
                         ch.pipeline().addLast(new DataPacketEncode()) ; //编码器
+
                     }
                 }) ;
 
         //6.连接
-        connect(bootstrap,"",900,MAX_RETRY) ;
+        connect(bootstrap,"127.0.0.1",9000,MAX_RETRY) ;
 
     }
 
@@ -80,12 +87,12 @@ public class IMClientStart {
         //6.连接
         bootstrap.connect(host,port).addListener(future -> {
             if(future.isSuccess()){
-                log.info("连接成功");
+                System.out.println("连接成功");
                 Channel channel = ((ChannelFuture)future).channel() ;
                 //启动控制台线程
                 startConsoleThread(channel)  ;
             }else if(retry == 0){
-                log.error("重复次数已经用完，放弃连接");
+                System.out.println("重复次数已经用完，放弃连接");
             }else {
                 //实现指数退避的方式实现重新连接
                 //重新连接
@@ -105,7 +112,7 @@ public class IMClientStart {
         Scanner scanner = new Scanner(System.in) ;
         new Thread(() -> {
             while (!Thread.interrupted()){
-                if (!SessionUtil.hasLogin(channel)){
+                if (!LoginUtil.hasLogin(channel)){
                     //登录请求
                     System.out.println("输入用户名称登录：");
 
@@ -116,15 +123,21 @@ public class IMClientStart {
                     channel.writeAndFlush(loginRequest) ;
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(5000);
                     }catch (InterruptedException ie){
 
                     }
+                    System.out.println("服务端绑定 channel ID:"+channel.id());
+//                    System.out.println(SessionUtil.getSession(channel));
                 }else {
                     //登录后发送消息请求
                     //空格
-                    String toUserId = scanner.next() ;
-                    String message = scanner.next() ;
+                    System.out.println("对方userId:");
+                    String toUserId = scanner.nextLine() ;
+                    System.out.println("发给对方message:");
+                    String message = scanner.nextLine() ;
+                    System.out.println(toUserId);
+                    System.out.println(message);
                     MessageRequestPacket messageRequestPacket = new MessageRequestPacket() ;
                     messageRequestPacket.setToUserId(toUserId);
                     messageRequestPacket.setMessage(message);

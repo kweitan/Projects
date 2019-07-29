@@ -17,8 +17,10 @@ public class SessionUtil {
 
     //绑定session
     public static void bindSession(Session session, Channel channel){
-        userIdChannelMap.put(session.getUserId(),channel) ;
-        channel.attr(Config.SESSION).set(session);
+        if(!hasLogin(channel)) {
+            userIdChannelMap.put(session.getUserId(), channel);
+            channel.attr(Config.SESSION).set(session);
+        }
     }
 
     public static void unBindSession(Channel channel){

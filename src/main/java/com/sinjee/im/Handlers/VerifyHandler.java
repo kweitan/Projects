@@ -12,14 +12,14 @@ import java.util.List;
  * 拒绝非本协议连接
  * 基于长度域拆包器【由于我们使用自定义协议4+1+1+1】
  */
-public class Verify extends LengthFieldBasedFrameDecoder {
+public class VerifyHandler extends LengthFieldBasedFrameDecoder {
 
     //长度域的偏移
     private static final int LENGTH_FIELD_OFFSET = 7;
     //长度域的长度
     private static final int LENGTH_FIELD_SIZE = 4;
 
-    public Verify(){
+    public VerifyHandler(){
         super(Integer.MAX_VALUE,LENGTH_FIELD_OFFSET,LENGTH_FIELD_SIZE);
     }
 
@@ -31,6 +31,7 @@ public class Verify extends LengthFieldBasedFrameDecoder {
             return null ;
         }
 
+        in.resetReaderIndex() ;
         return super.decode(ctx,in) ;
     }
 

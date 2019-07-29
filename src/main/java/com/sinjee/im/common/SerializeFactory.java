@@ -21,6 +21,10 @@ public class SerializeFactory {
 
     public static Codec<MessageResponsePacket>  messageResponsePacketCodec= getProtobufCodeC(MessageResponsePacket.class) ;
 
+    public static Codec<LogoutRequestPacket>  logoutRequestPacketCodec = getProtobufCodeC(LogoutRequestPacket.class) ;
+
+    public static Codec<LogoutResponsePacket>  logoutResponsePacketCodec = getProtobufCodeC(LogoutResponsePacket.class) ;
+
     public static <T> Codec<T> getProtobufCodeC(Class<T> T){
         return ProtobufProxy
                     .create(T) ;
@@ -39,7 +43,13 @@ public class SerializeFactory {
                 }
 
                 Codec<LoginRequestPacket> codec= LoginRequestPacketCodec ;
-                bytes = codec.encode(loginRequestPacket) ;
+                try{
+                    bytes = codec.encode(loginRequestPacket) ;
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
+
 
             }else if (command == Command.LOGIN_RESPONSE.getVaule()){
                 Codec<LoginResponsePacket> codec= loginResponsePacketCodec ;
@@ -52,7 +62,17 @@ public class SerializeFactory {
             }else if (command == Command.SERVER_SEND_MSG.getVaule()){
                 Codec<MessageResponsePacket> codec= messageResponsePacketCodec ;
                 bytes = codec.encode((MessageResponsePacket)packet) ;
+
+            }else if (command == Command.LOGOUT_REQUEST.getVaule()){
+                Codec<LogoutRequestPacket> codec= logoutRequestPacketCodec ;
+                bytes = codec.encode((LogoutRequestPacket)packet) ;
+
+            }else if (command == Command.LOGOUT_RESPONSE.getVaule()){
+                Codec<LogoutResponsePacket> codec= logoutResponsePacketCodec ;
+                bytes = codec.encode((LogoutResponsePacket)packet) ;
+
             }
+
 
         return bytes ;
     }
@@ -62,6 +82,11 @@ public class SerializeFactory {
         DataPacket dataPacket = null ;
         if (CommonUtil.byte2Int(serializeType) == SerializeEnum.PROTOBUF_SERIALIZE.getValue()){
             if (CommonUtil.byte2Int(command) == Command.LOGIN_REQUEST.getVaule()){
+                try {
+
+                }catch (Exception e){
+
+                }
                 Codec<LoginRequestPacket> codec= LoginRequestPacketCodec ;
                 LoginRequestPacket loginRequestPacket = codec.decode(bytes) ;
                 dataPacket = loginRequestPacket ;

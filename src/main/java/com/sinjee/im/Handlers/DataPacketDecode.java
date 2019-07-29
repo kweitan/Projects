@@ -16,4 +16,5 @@ public class DataPacketDecode extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         out.add(DataPacketCodeC.INSTANCE.decode(in)) ;
     }
+
 }

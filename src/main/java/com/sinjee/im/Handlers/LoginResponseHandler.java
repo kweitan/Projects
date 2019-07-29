@@ -2,6 +2,7 @@ package com.sinjee.im.Handlers;
 
 import com.sinjee.im.dto.LoginRequestPacket;
 import com.sinjee.im.dto.LoginResponsePacket;
+import com.sinjee.im.utils.LoginUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,8 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginResponsePacket msg) throws Exception {
         if (msg.getSuccess()){
-            log.info("登录成功！！！ 用户ID:{}",msg.getUserId());
+            System.out.println("登录成功！！！ 用户ID:"+msg.getUserId()+";channel ID为："+ctx.channel().id());
+            LoginUtil.markAsLogin(ctx.channel());
         }else {
             log.error("登录失败，原因{}",msg.getReason());
         }
@@ -26,6 +28,6 @@ public class LoginResponseHandler extends SimpleChannelInboundHandler<LoginRespo
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        log.info("客户端连接被关闭");
+        System.out.println("客户端连接被关闭");
     }
 }

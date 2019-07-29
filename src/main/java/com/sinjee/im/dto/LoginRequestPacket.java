@@ -22,7 +22,7 @@ public class LoginRequestPacket extends DataPacket {
     private Integer serializeMark = SerializeEnum.PROTOBUF_SERIALIZE.getValue();
 
     //用户userId
-    @Protobuf(fieldType = FieldType.STRING, order = 4, required = true)
+    @Protobuf(fieldType = FieldType.STRING, order = 4, required = false)
     private String userId ;
 
     //用户名

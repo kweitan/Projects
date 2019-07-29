@@ -6,30 +6,22 @@ import com.sinjee.im.enums.Command;
 import com.sinjee.im.enums.SerializeEnum;
 import lombok.Data;
 
-/***
+/**
  * @author kweitan
- * 发送消息对象
+ * 登出响应数据包
  */
 @Data
-public class MessageRequestPacket extends DataPacket{
+public class LogoutResponsePacket extends DataPacket{
     //指令
     @Protobuf(fieldType = FieldType.INT32,order = 2,required = true)
-    private Integer command = Command.CLIENT_SEND_MSG.getVaule();
+    private Integer command = Command.LOGOUT_RESPONSE.getVaule();
 
     //序列化算法方式
     @Protobuf(fieldType = FieldType.INT32,order = 3,required = true)
     private Integer serializeMark = SerializeEnum.PROTOBUF_SERIALIZE.getValue();
 
-    //发给谁
-    @Protobuf(fieldType = FieldType.STRING, order = 4, required = true)
-    private String toUserId ;
-
-
-    //消息内容
-    @Protobuf(fieldType = FieldType.STRING, order = 5, required = false)
-    private String message ;
-
-    public int getCommandType(){
-        return getCommand() ;
+    @Override
+    public int getCommandType() {
+        return getCommand();
     }
 }

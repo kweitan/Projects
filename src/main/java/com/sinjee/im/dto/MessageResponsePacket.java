@@ -14,7 +14,7 @@ import lombok.Data;
 public class MessageResponsePacket extends DataPacket {
     //指令
     @Protobuf(fieldType = FieldType.INT32,order = 2,required = true)
-    private Integer command = Command.LOGIN_REQUEST.getVaule();
+    private Integer command = Command.SERVER_SEND_MSG.getVaule();
 
     //序列化算法方式
     @Protobuf(fieldType = FieldType.INT32,order = 3,required = true)

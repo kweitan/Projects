@@ -2,7 +2,6 @@ package com.sinjee.im;
 
 import com.sinjee.im.Handlers.*;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,11 +17,15 @@ import io.netty.util.concurrent.GenericFutureListener;
 public class IMServerStart {
 
     public static void main(String[] args){
-        doStartUp() ;
+        try {
+            doStartUp() ;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //启动服务端
-    public static void doStartUp(){
+    public static void doStartUp() throws Exception{
 
         //1.启动辅助类
         ServerBootstrap serverBootstrap = new ServerBootstrap() ;
@@ -48,7 +51,7 @@ public class IMServerStart {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         //1).判断是否是自定协议格式 否：拒绝 基础长度域拆包器 在decode()方法执行前先进行判断
-                        ch.pipeline().addLast(new Verify()) ;
+                        ch.pipeline().addLast(new VerifyHandler()) ;
 
                         //2).添加解码器
                         ch.pipeline().addLast(new DataPacketDecode()) ;
@@ -58,10 +61,16 @@ public class IMServerStart {
 
                         //新增加用户认证
                         ch.pipeline().addLast(new AuthHandler()) ;
+
+                        //登出逻辑
+                        ch.pipeline().addLast(new LogoutRequestHandler()) ;
+
+                        //消息处理
                         ch.pipeline().addLast(new MessageRequestHandler()) ;
 
-                        //last).最后添加编码器
+                        //最后添加编码器
                         ch.pipeline().addLast(new DataPacketEncode()) ;
+
                     }
                 });
         //10.绑定端口9000
