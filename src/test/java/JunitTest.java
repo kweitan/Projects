@@ -73,4 +73,15 @@ public class JunitTest {
 
     }
 
+    @Test
+    public void test3(){
+        String HOST = System.getProperty("host","127.0.0.1") ;
+        int PORT = Integer.parseInt(System.getProperty("port","9001")) ;
+        System.out.println(System.nanoTime()) ;
+
+        System.out.printf("HOST:%s  PORT:%d",HOST,PORT) ;
+
+        System.out.println(UUID.randomUUID().toString().split("-")[0]) ;
+    }
+
 }

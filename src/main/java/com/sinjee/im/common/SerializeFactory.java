@@ -25,6 +25,10 @@ public class SerializeFactory {
 
     public static Codec<LogoutResponsePacket>  logoutResponsePacketCodec = getProtobufCodeC(LogoutResponsePacket.class) ;
 
+    public static Codec<CreateGroupRequestPacket>  createGroupRequestDataPacketCodec = getProtobufCodeC(CreateGroupRequestPacket.class) ;
+
+    public static Codec<CreateGroupResponsePacket>  createGroupResponsePacketCodec = getProtobufCodeC(CreateGroupResponsePacket.class) ;
+
     public static <T> Codec<T> getProtobufCodeC(Class<T> T){
         return ProtobufProxy
                     .create(T) ;
@@ -71,6 +75,14 @@ public class SerializeFactory {
                 Codec<LogoutResponsePacket> codec= logoutResponsePacketCodec ;
                 bytes = codec.encode((LogoutResponsePacket)packet) ;
 
+            }else if (command == Command.ADD_GROUP_REQUEST.getVaule()){
+                Codec<CreateGroupRequestPacket> codec= createGroupRequestDataPacketCodec ;
+                bytes = codec.encode((CreateGroupRequestPacket)packet) ;
+//
+            }else if (command == Command.ADD_GROUP_RESPONSE.getVaule()){
+                Codec<CreateGroupResponsePacket> codec= createGroupResponsePacketCodec ;
+                bytes = codec.encode((CreateGroupResponsePacket)packet) ;
+
             }
 
 
@@ -105,6 +117,17 @@ public class SerializeFactory {
                 Codec<MessageResponsePacket> codec= messageResponsePacketCodec ;
                 MessageResponsePacket messageResponsePacket = codec.decode(bytes) ;
                 dataPacket = messageResponsePacket ;
+
+            }else if (CommonUtil.byte2Int(command) == Command.ADD_GROUP_REQUEST.getVaule()){
+                Codec<CreateGroupRequestPacket> codec= createGroupRequestDataPacketCodec ;
+                CreateGroupRequestPacket messageResponsePacket = codec.decode(bytes) ;
+                dataPacket = messageResponsePacket ;
+
+            }else if (CommonUtil.byte2Int(command) == Command.ADD_GROUP_RESPONSE.getVaule()){
+                Codec<CreateGroupResponsePacket> codec= createGroupResponsePacketCodec ;
+                CreateGroupResponsePacket messageResponsePacket = codec.decode(bytes) ;
+                dataPacket = messageResponsePacket ;
+
             }
         }
         return dataPacket ;

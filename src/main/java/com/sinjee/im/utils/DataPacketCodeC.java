@@ -1,6 +1,7 @@
 package com.sinjee.im.utils;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.sinjee.im.Handlers.CreateGroupResponseHandler;
 import com.sinjee.im.common.SerializeFactory;
 import com.sinjee.im.config.Config;
 import com.sinjee.im.dto.*;
@@ -18,6 +19,13 @@ public class DataPacketCodeC {
 
         //1.序列化对象
         byte[] bytes = SerializeFactory.serialize(packet.getCommandType(),SerializeEnum.PROTOBUF_SERIALIZE.getValue(),packet) ;
+
+        if(packet instanceof CreateGroupRequestPacket){
+            System.out.println("command:"+packet.getCommandType());
+        }else if(packet instanceof CreateGroupResponsePacket){
+            System.out.println("command:"+packet.getCommandType());
+        }
+
 
         //2.编码过程
         out.writeInt(Config.MAGIC_NUM) ;

@@ -62,11 +62,16 @@ public class IMServerStart {
                         //新增加用户认证
                         ch.pipeline().addLast(new AuthHandler()) ;
 
+                        //创建群
+                        ch.pipeline().addLast(new CreateGroupRequestHandler()) ;
+
                         //登出逻辑
                         ch.pipeline().addLast(new LogoutRequestHandler()) ;
 
                         //消息处理
                         ch.pipeline().addLast(new MessageRequestHandler()) ;
+
+//                        ch.pipeline().addAfter("",)
 
                         //最后添加编码器
                         ch.pipeline().addLast(new DataPacketEncode()) ;

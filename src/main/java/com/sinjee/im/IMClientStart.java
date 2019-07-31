@@ -1,6 +1,8 @@
 package com.sinjee.im;
 
 import com.sinjee.im.Handlers.*;
+import com.sinjee.im.clientui.ConsoleCommandManager;
+import com.sinjee.im.clientui.LoginConsoleCommand;
 import com.sinjee.im.dto.LoginRequestPacket;
 import com.sinjee.im.dto.MessageRequestPacket;
 import com.sinjee.im.utils.LoginUtil;
@@ -63,6 +65,9 @@ public class IMClientStart {
                         //登出逻辑
                         ch.pipeline().addLast(new LogoutResponseHandler()) ;
 
+                        //创建群
+                        ch.pipeline().addLast(new CreateGroupResponseHandler()) ;
+
                         //消息处理
                         ch.pipeline().addLast(new MessageResponseHandler()) ;
 
@@ -107,41 +112,17 @@ public class IMClientStart {
 
     //控制台线程
     private static void startConsoleThread(Channel channel){
-        //登录请求
-        LoginRequestPacket loginRequest = new LoginRequestPacket() ;
+        LoginConsoleCommand loginConsoleCommand = new LoginConsoleCommand() ;
+        ConsoleCommandManager consoleCommandManager = new ConsoleCommandManager();
+
         Scanner scanner = new Scanner(System.in) ;
         new Thread(() -> {
             while (!Thread.interrupted()){
                 if (!LoginUtil.hasLogin(channel)){
                     //登录请求
-                    System.out.println("输入用户名称登录：");
-
-                    String userName = scanner.nextLine() ;
-                    loginRequest.setUserName(userName);
-                    loginRequest.setUserPassword("default");
-
-                    channel.writeAndFlush(loginRequest) ;
-
-                    try {
-                        Thread.sleep(5000);
-                    }catch (InterruptedException ie){
-
-                    }
-                    System.out.println("服务端绑定 channel ID:"+channel.id());
-//                    System.out.println(SessionUtil.getSession(channel));
+                    loginConsoleCommand.exec(scanner,channel);
                 }else {
-                    //登录后发送消息请求
-                    //空格
-                    System.out.println("对方userId:");
-                    String toUserId = scanner.nextLine() ;
-                    System.out.println("发给对方message:");
-                    String message = scanner.nextLine() ;
-                    System.out.println(toUserId);
-                    System.out.println(message);
-                    MessageRequestPacket messageRequestPacket = new MessageRequestPacket() ;
-                    messageRequestPacket.setToUserId(toUserId);
-                    messageRequestPacket.setMessage(message);
-                    channel.writeAndFlush(messageRequestPacket) ;
+                    consoleCommandManager.exec(scanner, channel);
                 }
             }
         }).start();

@@ -1,5 +1,6 @@
 package com.sinjee.im.Handlers;
 
+import com.sinjee.im.dto.CreateGroupResponsePacket;
 import com.sinjee.im.dto.DataPacket;
 import com.sinjee.im.utils.DataPacketCodeC;
 import io.netty.buffer.ByteBuf;
@@ -13,6 +14,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class DataPacketEncode extends MessageToByteEncoder<DataPacket> {
     @Override
     protected void encode(ChannelHandlerContext ctx, DataPacket msg, ByteBuf out) throws Exception {
+
         DataPacketCodeC.INSTANCE.encode(msg,out);
     }
 }

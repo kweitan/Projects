@@ -8,6 +8,6 @@ import java.util.UUID;
  */
 public class RandomUtil {
     public synchronized static String getRandomUUID(){
-        return UUID.randomUUID().toString() ;
+        return UUID.randomUUID().toString().split("-")[0] ;
     }
 }
